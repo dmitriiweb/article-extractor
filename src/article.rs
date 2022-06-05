@@ -1,5 +1,5 @@
 use crate::title::Title;
-use scraper::{Html, Selector};
+use scraper::Html;
 
 pub struct Article {
     pub title: String,
@@ -10,7 +10,7 @@ pub struct Article {
 impl Article {
     pub fn from_html(html: String) -> Self {
         let html = Html::parse_document(&html[..]);
-        let title = Title::from_html(html);
+        let title = Title::from_html(&html);
         Article {
             title: title.title,
             text: String::from("html"),
