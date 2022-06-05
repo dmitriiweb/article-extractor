@@ -43,3 +43,18 @@ fn test_simple_article() {
 
     assert_eq!(new_article.title, test_data.title);
 }
+
+#[test]
+fn test_article_without_title() {
+    let data_dir = get_data_dir();
+    let mut html_file = data_dir.clone();
+    html_file.push("example_without_title.html");
+    let mut test_data_file = data_dir.clone();
+    test_data_file.push("example_without_title.json");
+
+    let html_content = read_file(html_file);
+    let new_article = Article::from_html(html_content);
+    let test_data = TestData::from_file(test_data_file).unwrap();
+
+    assert_eq!(new_article.title, test_data.title);
+}
