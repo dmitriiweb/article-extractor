@@ -10,7 +10,7 @@ pub struct Article {
 impl Article {
     pub fn from_html(html: String) -> Self {
         let html = Html::parse_document(&html[..]);
-        let title = title::from_html(&html);
+        let title = title::get_title(&html);
         Article {
             title: title,
             text: String::from("html"),
