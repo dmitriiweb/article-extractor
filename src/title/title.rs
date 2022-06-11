@@ -1,6 +1,6 @@
 use super::titles_extractor::TitlesExtractor;
 use regex::Regex;
-use scraper::{Html, Selector};
+use scraper::Html;
 
 #[derive(Debug, Clone)]
 struct OptimalTitle {
