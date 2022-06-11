@@ -42,6 +42,7 @@ fn clean_optimal_title(opt_title: &OptimalTitle) -> Option<String> {
     let chars_list = ["|", " - ", "_", "/", " » "];
     let mut title = opt_title.title_text.clone().unwrap();
     for i in chars_list.iter() {
+        println!("title: {:?} | delimiter {}", opt_title.title_text, i);
         title = title_splitter(&title, i, &opt_title.title_h1_text);
     }
     Some(title)
@@ -67,7 +68,7 @@ fn title_splitter(title: &str, splitter: &str, hint: &Option<String>) -> String 
                 .replace_all(&current_text, "")
                 .to_ascii_lowercase();
             if filtered_current_text.contains(&filtered_current_text) {
-                large_text_idx = 1;
+                large_text_idx = 0;
                 break;
             }
             if current_text.len() > large_text_len {
