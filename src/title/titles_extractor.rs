@@ -1,11 +1,13 @@
 use scraper::{Html, Selector};
 
+/// Extracting article title from html
 #[derive(Copy, Clone)]
 pub struct TitlesExtractor<'a> {
     pub html: &'a Html,
 }
 
 impl<'a> TitlesExtractor<'a> {
+    /// Extract article title from <title> tag
     pub fn get_title(self) -> Option<String> {
         let selector = Selector::parse("title").unwrap();
         let title = self.html.select(&selector).next();
@@ -17,6 +19,7 @@ impl<'a> TitlesExtractor<'a> {
     }
 
     pub fn get_h1(self) -> Option<String> {
+        /// Extract article title from <h1> tags
         let selector = Selector::parse("h1").unwrap();
         let h1_list = self.html.select(&selector);
         let mut titles: Vec<String> = Vec::new();
@@ -36,6 +39,7 @@ impl<'a> TitlesExtractor<'a> {
         return Some(title_text.to_string());
     }
 
+    /// Extract article title from Facebook meta tag
     pub fn get_fb(self) -> Option<String> {
         let selector1 = Selector::parse("meta[property=\"og:title\"]").unwrap();
 
