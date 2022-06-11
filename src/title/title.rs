@@ -11,15 +11,11 @@ struct OptimalTitle {
 pub fn get_title(html: &Html) -> Option<String> {
     let title_extractor = TitlesExtractor { html };
     let title_from_title = title_extractor.get_title();
+    if title_from_title == None {
+        return None;
+    }
     let title_from_h1 = title_extractor.get_h1();
     let title_from_fb = title_extractor.get_fb();
-    println!("{:?}", title_from_h1);
-    // let title_from_title = get_title_from_title(html);
-    // if title_from_title == None {
-    //     return None;
-    // }
-    // let title_from_h1 = get_title_from_h1(html);
-    // let title_from_fb = get_title_from_fb(html);
 
     let title = extract_title(title_from_title, title_from_h1, title_from_fb);
 
@@ -33,11 +29,13 @@ fn extract_title(
 ) -> Option<String> {
     let filter_re = Regex::new("[^\\u4e00-\\u9fa5a-zA-Z0-9]\x20]").unwrap();
     let optimal_title = get_optimal_title(title_title, title_h1, title_fb);
-    // let title = split_title(&optimal_title);
-    None
+    let title = split_title(&optimal_title);
+    title
 }
 
-// fn split_title(title: &OptimalTitle) -> Option<String> {}
+fn split_title(title: &OptimalTitle) -> Option<String> {
+    None
+}
 
 // fn title_spliter(title: &str, splitter: &str) -> String {}
 
@@ -59,14 +57,14 @@ fn get_optimal_title(
         use_delimiter = true;
     } else if !filtered_h1.is_none()
         && filtered_title
-        .clone()
-        .unwrap()
-        .contains(&title_h1.clone().unwrap())
+            .clone()
+            .unwrap()
+            .contains(&title_h1.clone().unwrap())
         && !filtered_fb.is_none()
         && filtered_title
-        .clone()
-        .unwrap()
-        .contains(&filtered_fb.clone().unwrap())
+            .clone()
+            .unwrap()
+            .contains(&filtered_fb.clone().unwrap())
         && filtered_h1.unwrap().len() > filtered_fb.clone().unwrap().len()
     {
         title_text = title_h1;
@@ -74,8 +72,8 @@ fn get_optimal_title(
     } else if !filtered_fb.is_none()
         && filtered_fb != filtered_title
         && filtered_title
-        .unwrap()
-        .starts_with(&title_fb.clone().unwrap())
+            .unwrap()
+            .starts_with(&title_fb.clone().unwrap())
     {
         title_text = title_fb;
         use_delimiter = true;
