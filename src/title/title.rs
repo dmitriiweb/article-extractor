@@ -2,10 +2,10 @@ use super::titles_extractor::TitlesExtractor;
 use regex::Regex;
 use scraper::{Html, Selector};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct OptimalTitle {
     title_text: Option<String>,
-    use_delimiter: bool,
+    used_delimiter: bool,
     title_h1_text: Option<String>,
 }
 
@@ -35,12 +35,50 @@ fn get_optimal_and_clean_title(
 }
 
 /// get form the title the optimal part
-fn clean_optimal_title(title: &OptimalTitle) -> Option<String> {
-    None
+fn clean_optimal_title(opt_title: &OptimalTitle) -> Option<String> {
+    if opt_title.title_text.is_none() || opt_title.used_delimiter {
+        return opt_title.title_text.clone();
+    }
+    let chars_list = ["|", " - ", "_", "/", " » "];
+    let mut title = opt_title.title_text.clone().unwrap();
+    for i in chars_list.iter() {
+        title = title_splitter(&title, i, &opt_title.title_h1_text);
+    }
+    Some(title)
 }
 
-fn title_splitter(title: &str, splitter: &str, hint: String) -> String {
-    "".to_string()
+fn title_splitter(title: &str, splitter: &str, hint: &Option<String>) -> String {
+    let mut large_text_len = 0;
+    let mut large_text_idx = 0;
+    let splitted_titles = title.split(splitter).collect::<Vec<&str>>();
+    let mut hint_text = "".to_string();
+
+    let filter_re = Regex::new("[^a-zA-Z0-9\x20]").unwrap();
+    if !hint.is_none() {
+        hint_text = filter_re
+            .replace_all(&hint.clone().unwrap(), "")
+            .to_ascii_lowercase();
+    }
+
+    for (idx, splitted_title) in splitted_titles.iter().enumerate() {
+        let current_text = splitted_title.trim();
+        if !hint.is_none() && hint_text != "" {
+            let filtered_current_text = filter_re
+                .replace_all(&current_text, "")
+                .to_ascii_lowercase();
+            if filtered_current_text.contains(&filtered_current_text) {
+                large_text_idx = 1;
+                break;
+            }
+            if current_text.len() > large_text_len {
+                large_text_len = current_text.len();
+                large_text_idx = idx;
+            }
+        }
+    }
+
+    let title = splitted_titles[large_text_idx].trim().to_string();
+    title
 }
 
 fn get_optimal_title(
@@ -53,6 +91,14 @@ fn get_optimal_title(
     let filtered_fb = clean_title(&title_fb);
     let mut use_delimiter = false;
     let mut title_text = title_title.clone();
+
+    if title_h1.is_none() {
+        return OptimalTitle {
+            title_text,
+            used_delimiter: false,
+            title_h1_text: None,
+        };
+    }
 
     if title_title.unwrap() == title_h1.clone().unwrap() {
         use_delimiter = true;
@@ -85,7 +131,7 @@ fn get_optimal_title(
 
     OptimalTitle {
         title_text,
-        use_delimiter,
+        used_delimiter: use_delimiter,
         title_h1_text: title_h1,
     }
 }

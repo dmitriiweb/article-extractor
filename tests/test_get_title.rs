@@ -60,5 +60,5 @@ fn test_title_from_h1_small() {
 
     let html_struct = Html::parse_document(html);
     let title = get_title(&html_struct);
-    assert_eq!(title.unwrap(), "Some Test");
+    assert_eq!(title.unwrap(), "Some test title");
 }
