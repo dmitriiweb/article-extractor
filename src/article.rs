@@ -1,8 +1,8 @@
-use crate::title::Title;
+use crate::title;
 use scraper::Html;
 
 pub struct Article {
-    pub title: String,
+    pub title: Option<String>,
     pub text: String,
     pub article_html: String,
 }
@@ -10,9 +10,9 @@ pub struct Article {
 impl Article {
     pub fn from_html(html: String) -> Self {
         let html = Html::parse_document(&html[..]);
-        let title = Title::from_html(&html);
+        let title = title::from_html(&html);
         Article {
-            title: title.title,
+            title: title,
             text: String::from("html"),
             article_html: String::from("html"),
         }
