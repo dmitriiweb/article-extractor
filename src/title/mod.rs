@@ -1,2 +1,2 @@
 pub mod title;
-pub mod titles_extractor;
+mod titles_extractor;

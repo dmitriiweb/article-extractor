@@ -6,8 +6,10 @@ use scraper::{Html, Selector};
 struct OptimalTitle {
     title_text: Option<String>,
     use_delimiter: bool,
+    title_h1_text: Option<String>,
 }
 
+/// Extracts the title from the HTML document.
 pub fn get_title(html: &Html) -> Option<String> {
     let title_extractor = TitlesExtractor { html };
     let title_from_title = title_extractor.get_title();
@@ -17,27 +19,29 @@ pub fn get_title(html: &Html) -> Option<String> {
     let title_from_h1 = title_extractor.get_h1();
     let title_from_fb = title_extractor.get_fb();
 
-    let title = extract_title(title_from_title, title_from_h1, title_from_fb);
+    let title = get_optimal_and_clean_title(title_from_title, title_from_h1, title_from_fb);
 
     title
 }
 
-fn extract_title(
+fn get_optimal_and_clean_title(
     title_title: Option<String>,
     title_h1: Option<String>,
     title_fb: Option<String>,
 ) -> Option<String> {
-    let filter_re = Regex::new("[^\\u4e00-\\u9fa5a-zA-Z0-9]\x20]").unwrap();
     let optimal_title = get_optimal_title(title_title, title_h1, title_fb);
-    let title = split_title(&optimal_title);
+    let title = clean_optimal_title(&optimal_title);
     title
 }
 
-fn split_title(title: &OptimalTitle) -> Option<String> {
+/// get form the title the optimal part
+fn clean_optimal_title(title: &OptimalTitle) -> Option<String> {
     None
 }
 
-// fn title_spliter(title: &str, splitter: &str) -> String {}
+fn title_splitter(title: &str, splitter: &str, hint: String) -> String {
+    "".to_string()
+}
 
 fn get_optimal_title(
     title_title: Option<String>,
@@ -53,7 +57,7 @@ fn get_optimal_title(
     if title_title.unwrap() == title_h1.clone().unwrap() {
         use_delimiter = true;
     } else if !filtered_h1.is_none() && filtered_h1 == filtered_fb {
-        title_text = title_h1;
+        title_text = title_h1.clone();
         use_delimiter = true;
     } else if !filtered_h1.is_none()
         && filtered_title
@@ -67,7 +71,7 @@ fn get_optimal_title(
             .contains(&filtered_fb.clone().unwrap())
         && filtered_h1.unwrap().len() > filtered_fb.clone().unwrap().len()
     {
-        title_text = title_h1;
+        title_text = title_h1.clone();
         use_delimiter = true;
     } else if !filtered_fb.is_none()
         && filtered_fb != filtered_title
@@ -82,6 +86,7 @@ fn get_optimal_title(
     OptimalTitle {
         title_text,
         use_delimiter,
+        title_h1_text: title_h1,
     }
 }
 
