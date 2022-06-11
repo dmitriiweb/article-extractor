@@ -9,7 +9,7 @@ struct OptimalTitle {
 }
 
 pub fn get_title(html: &Html) -> Option<String> {
-    let title_extractor = TitlesExtractor { html: html };
+    let title_extractor = TitlesExtractor { html };
     let title_from_title = title_extractor.get_title();
     let title_from_h1 = title_extractor.get_h1();
     let title_from_fb = title_extractor.get_fb();
@@ -59,14 +59,14 @@ fn get_optimal_title(
         use_delimiter = true;
     } else if !filtered_h1.is_none()
         && filtered_title
-            .clone()
-            .unwrap()
-            .contains(&title_h1.clone().unwrap())
+        .clone()
+        .unwrap()
+        .contains(&title_h1.clone().unwrap())
         && !filtered_fb.is_none()
         && filtered_title
-            .clone()
-            .unwrap()
-            .contains(&filtered_fb.clone().unwrap())
+        .clone()
+        .unwrap()
+        .contains(&filtered_fb.clone().unwrap())
         && filtered_h1.unwrap().len() > filtered_fb.clone().unwrap().len()
     {
         title_text = title_h1;
@@ -74,8 +74,8 @@ fn get_optimal_title(
     } else if !filtered_fb.is_none()
         && filtered_fb != filtered_title
         && filtered_title
-            .unwrap()
-            .starts_with(&title_fb.clone().unwrap())
+        .unwrap()
+        .starts_with(&title_fb.clone().unwrap())
     {
         title_text = title_fb;
         use_delimiter = true;

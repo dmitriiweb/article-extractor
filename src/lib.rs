@@ -1,2 +1,2 @@
 pub mod article;
-mod title;
+pub mod title;
